@@ -27,8 +27,11 @@ st.dataframe(df.head())
 
 # Data Preprocessing
 
-# Replace 0 with NaN
-df[['Glucose','BloodPressure','SkinThickness','Insulin','BMI']] = df[['Glucose','BloodPressure','SkinThickness','Insulin','BMI']].replace(0,np.NaN)
+# List of columns to update
+columns_to_update = ['Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI']
+
+# Replace 0 with NaN in the specified columns
+df[columns_to_update] = df[columns_to_update].replace(0, np.nan)
 
 # Replacing missing values
 def median_target(var):   
