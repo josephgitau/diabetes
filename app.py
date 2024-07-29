@@ -2,6 +2,8 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # ML Libraries
 from sklearn.ensemble import GradientBoostingClassifier
@@ -25,11 +27,8 @@ st.dataframe(df.head())
 
 # Data Preprocessing
 
-# List of columns to update
-columns_to_update = ['Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI']
-
-# Replace 0 with NaN in the specified columns
-df[columns_to_update] = df[columns_to_update].replace(0, np.nan)
+# Replace 0 with NaN
+df[['Glucose','BloodPressure','SkinThickness','Insulin','BMI']] = df[['Glucose','BloodPressure','SkinThickness','Insulin','BMI']].replace(0,np.NaN)
 
 # Replacing missing values
 def median_target(var):   
@@ -56,6 +55,26 @@ df.loc[(df['Outcome'] == 1 ) & (df['Insulin'].isnull()), 'Insulin'] = 206.8
 # BMI
 df.loc[(df['Outcome'] == 0 ) & (df['BMI'].isnull()), 'BMI'] = 30.9
 df.loc[(df['Outcome'] == 1 ) & (df['BMI'].isnull()), 'BMI'] = 35.4
+
+# Add two columns for data visualization
+col1, col2 = st.columns(2)
+
+with col1:
+    st.header("Correlation Heatmap")
+    f, ax = plt.subplots(figsize=(10, 6))
+    mask = np.triu(np.ones_like(df.corr(), dtype=bool))
+    sns.heatmap(df.corr(), annot=True, fmt=".2f", mask=mask, 
+                cmap='coolwarm', vmin=-1, vmax=1) 
+    st.pyplot(f)   
+
+with col2:
+    # Display a clustermap
+    st.header("Clustermap")
+    f, ax = plt.subplots(figsize=(10, 6))
+    mask = np.triu(np.ones_like(df.corr(), dtype=bool))
+    sns.heatmap(df.corr(), annot=True, fmt=".2f", mask=mask, 
+                cmap='coolwarm', vmin=-1, vmax=1) 
+    st.pyplot(f) 
 
 # Create our data features and target
 X = df.drop(columns='Outcome')
